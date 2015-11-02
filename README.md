@@ -2,7 +2,7 @@
 Simple, fast and easy to use classes for providing basic functionality for talking with remote api's including the REST standard.
 
 ## Installation
-Add the latest version pf pecee-http-service to your ```composer.json```
+Add the latest version of pecee-http-service to your ```composer.json```
 
 ```json
 {
