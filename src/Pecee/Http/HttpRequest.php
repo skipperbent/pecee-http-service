@@ -117,7 +117,7 @@ class HttpRequest {
 	public function execute($return) {
 		$handle = curl_init();
 
-		if(is_null($this->url)) {
+		if($this->url === null) {
 			throw new \InvalidArgumentException('Missing required property: url');
 		}
 
@@ -132,7 +132,7 @@ class HttpRequest {
 		}
 
 		// Add request data
-		if($this->method && strtolower($this->method) != 'get' && is_array($this->data)) {
+		if($this->method && strtolower($this->method) !== 'get' && is_array($this->data)) {
 			$data = ($this->postJson) ? json_encode($this->data) : http_build_query($this->data);
 			$this->addHeader('Content-length: ' . strlen($data));
 
