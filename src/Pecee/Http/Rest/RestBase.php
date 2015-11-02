@@ -44,7 +44,7 @@ class RestBase {
      * @param string $method
      * @param array|null $data
      * @throws \Pecee\Http\Rest\RestException
-     * @return HttpResponse|mixed
+     * @return \Pecee\Http\HttpResponse|mixed
      */
     public function api($url = null, $method = self::METHOD_GET, array $data = array()) {
         if(!in_array($method, self::$METHODS)) {
@@ -54,15 +54,15 @@ class RestBase {
         $data = array_merge($this->httpRequest->getPostData(), $data);
         $data['_method'] = $method;
 
-        if($method == self::METHOD_GET && is_array($data)) {
+        if($method === self::METHOD_GET && is_array($data)) {
             $url .= '?'.http_build_query($data);
         }
 
-        $apiUrl = rtrim($this->getServiceUrl(), '/') . ($url ? '/' . $url : '');
+        $apiUrl = rtrim($this->getServiceUrl(), '/') . '/' . (ltrim($url, '/') ? '/' . $url : '');
 
         $this->httpRequest->setUrl($apiUrl);
 
-        if($method != self::METHOD_GET) {
+        if($method !== self::METHOD_GET) {
             $this->httpRequest->setPostData($data);
         }
 
