@@ -58,7 +58,7 @@ class RestBase {
             $url .= '?'.http_build_query($data);
         }
 
-        $apiUrl = rtrim($this->getServiceUrl(), '/') . '/' . (ltrim($url, '/') ? '/' . $url : '');
+        $apiUrl = trim($this->getServiceUrl(), '/') . '/' . (($url !== null) ? trim($url, '/') : '');
 
         $this->httpRequest->setUrl($apiUrl);
 
