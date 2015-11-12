@@ -128,6 +128,7 @@ class HttpRequest {
 		}
 
 		if($this->timeout) {
+			curl_setopt($handle, CURLOPT_CONNECTTIMEOUT_MS, $this->timeout);
 			curl_setopt($handle, CURLOPT_TIMEOUT_MS, $this->timeout);
 		}
 
