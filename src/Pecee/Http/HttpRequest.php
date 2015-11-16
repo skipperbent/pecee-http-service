@@ -142,8 +142,12 @@ class HttpRequest {
 		}
 
 		// Add request data
-		if($this->method && strtolower($this->method) !== 'get' && is_array($this->data)) {
-			$data = ($this->postJson) ? json_encode($this->data) : http_build_query($this->data);
+		if($this->method && strtolower($this->method) !== 'get') {
+			if($this->rawData !== null) {
+				$data = $this->rawData;
+			} else {
+				$data = ($this->postJson) ? json_encode($this->rawData) : http_build_query($this->rawData);
+			}
 			$this->addHeader('Content-length: ' . strlen($data));
 
 			curl_setopt($handle, CURLOPT_POST, true);
