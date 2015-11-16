@@ -146,7 +146,7 @@ class HttpRequest {
 			if($this->rawData !== null) {
 				$data = $this->rawData;
 			} else {
-				$data = ($this->postJson) ? json_encode($this->rawData) : http_build_query($this->rawData);
+				$data = ($this->postJson && is_array($this->data)) ? json_encode($this->data) : http_build_query($this->data);
 			}
 			$this->addHeader('Content-length: ' . strlen($data));
 
