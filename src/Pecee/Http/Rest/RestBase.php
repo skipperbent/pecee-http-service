@@ -51,13 +51,20 @@ class RestBase {
             throw new RestException('Invalid request method');
         }
 
-        if(!$this->httpRequest->getRawPostData()) {
+        if($this->httpRequest->getRawPostData() !== null) {
             $data = $this->httpRequest->getRawPostData();
+
+            if($method !== self::METHOD_GET) {
+                $this->httpRequest->setRawPostData($data);
+            }
         } else {
             $data = array_merge($this->httpRequest->getPostData(), $data);
-        }
+            $data['_method'] = $method;
 
-        $data['_method'] = $method;
+            if($method !== self::METHOD_GET) {
+                $this->httpRequest->setPostData($data);
+            }
+        }
 
         if($method === self::METHOD_GET && is_array($data)) {
             $url .= '?'.http_build_query($data);
@@ -66,10 +73,6 @@ class RestBase {
         $apiUrl = trim($this->getServiceUrl(), '/') . '/' . (($url !== null) ? trim($url, '/') : '');
 
         $this->httpRequest->setUrl($apiUrl);
-
-        if($method !== self::METHOD_GET) {
-            $this->httpRequest->setRawPostData($data);
-        }
 
         $this->httpRequest->setMethod($method);
 
