@@ -8,6 +8,7 @@ class HttpRequest {
 	protected $method;
 	protected $headers;
 	protected $options;
+	protected $rawData;
 	protected $data;
 	protected $timeout;
 	protected $postJson;
@@ -54,8 +55,16 @@ class HttpRequest {
 		$this->data = $data;
 	}
 
+	public function setRawPostData($data) {
+		$this->rawData = $data;
+	}
+
 	public function getPostData() {
 		return $this->data;
+	}
+
+	public function getRawPostData() {
+		return $this->rawData;
 	}
 
 	public function post($return = false) {
