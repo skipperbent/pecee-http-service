@@ -70,10 +70,9 @@ class RestBase {
             $url .= '?'.http_build_query($data);
         }
 
-        $apiUrl = trim($this->getServiceUrl(), '/') . '/' . (($url !== null) ? trim($url, '/') : '');
+        $apiUrl = trim($this->getServiceUrl(), '/') . (($url !== null) ? '/' . trim($url, '/') : '');
 
         $this->httpRequest->setUrl($apiUrl);
-
         $this->httpRequest->setMethod($method);
 
         $response = $this->httpRequest->execute(true);
