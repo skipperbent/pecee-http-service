@@ -137,6 +137,10 @@ class HttpRequest {
 		}
 
 		if($this->timeout) {
+
+			// Ensure no PHP timeout
+			set_time_limit(0);
+
 			curl_setopt($handle, CURLOPT_CONNECTTIMEOUT_MS, $this->timeout);
 			curl_setopt($handle, CURLOPT_TIMEOUT_MS, $this->timeout);
 		}
