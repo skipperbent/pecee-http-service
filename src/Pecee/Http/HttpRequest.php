@@ -19,6 +19,9 @@ class HttpRequest {
 			throw new \Exception('This service requires the CURL PHP extension.');
 		}
 
+		// Ensure no PHP timeout
+		set_time_limit(0);
+
 		$this->reset();
 		$this->url = $url;
 	}
