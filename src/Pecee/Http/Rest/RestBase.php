@@ -77,9 +77,6 @@ class RestBase {
 
         $response = $this->httpRequest->execute(true);
 
-        // Reset request (headers, post-data etc)
-        $this->httpRequest->reset();
-
         return $response;
     }
 
