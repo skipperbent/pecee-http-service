@@ -151,6 +151,13 @@ class HttpRequest {
 			} else {
 				$data = ($this->postJson && is_array($this->data)) ? json_encode($this->data) : http_build_query($this->data);
 			}
+
+			foreach($this->headers as $key => $header) {
+				if(stripos($header, 'content-length:') !== false) {
+					unset($this->headers[$key]);
+				}
+			}
+
 			$this->addHeader('Content-length: ' . strlen($data));
 
 			curl_setopt($handle, CURLOPT_POST, true);
