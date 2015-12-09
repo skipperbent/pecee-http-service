@@ -126,11 +126,15 @@ class HttpRequest {
 		$this->addHeader('Authorization: Basic ' . base64_encode(sprintf('%s:%s', $username, $password)));
 	}
 
-	public function execute($return) {
+	public function execute($return = true) {
 		$handle = curl_init();
 
 		if($this->url === null) {
 			throw new \InvalidArgumentException('Missing required property: url');
+		}
+
+		if (strtolower($this->method) !== 'get') {
+			$this->url .= ((strpos($this->url, '?') === false) ? '?' : '&') . http_build_query(['_method' => $this->method]);
 		}
 
 		curl_setopt($handle, CURLOPT_URL, $this->url);
