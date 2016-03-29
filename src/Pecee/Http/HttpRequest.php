@@ -164,6 +164,7 @@ class HttpRequest {
 
 			$this->addHeader('Content-length: ' . strlen($data));
 
+			curl_setopt($handle, CURLOPT_CUSTOMREQUEST, $this->method);
 			curl_setopt($handle, CURLOPT_POST, true);
 			curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
 		}
