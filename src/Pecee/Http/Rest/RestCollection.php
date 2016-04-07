@@ -34,10 +34,10 @@ class RestCollection implements IRestResult {
      * @param array|null $data
      *
      * @throws \Pecee\Http\Rest\RestException
-     * @return self
+     * @return static
      */
     public function api($url = null, $method = RestBase::METHOD_GET, array $data = array()) {
-        return $this->getService()->api($url, $method, $data);
+        return $this->service->api($url, $method, $data);
     }
 
     /**
@@ -45,7 +45,7 @@ class RestCollection implements IRestResult {
      *
      * Alias for $this->api();
      *
-     * @return self
+     * @return static
      */
     public function execute() {
         return $this->api();
@@ -53,5 +53,9 @@ class RestCollection implements IRestResult {
 
     public function getService() {
         return $this->service;
+    }
+
+    public function setService(RestBase $service) {
+        $this->service = $service;
     }
 }
