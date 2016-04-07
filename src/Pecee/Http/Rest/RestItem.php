@@ -11,23 +11,7 @@ class RestItem implements IRestResult, IRestEventListener {
         $this->service = $service;
     }
 
-    /**
-     * Returns result-collection specific for this service.
-     *
-     * @return \Pecee\Http\Rest\RestCollection
-     */
-    public function onCreateCollection() {
-        return new RestCollection($this->service);
-    }
-
-    /**
-     * @return self
-     */
-    public function onCreateItem() {
-        return new self($this->service);
-    }
-
-    public function setRow(\stdClass $row) {
+    public function setRow(\stdClass $row = null) {
         $this->row = $row;
     }
 
@@ -41,6 +25,21 @@ class RestItem implements IRestResult, IRestEventListener {
 
     public function getRow() {
         return $this->row;
+    }
+
+    /**
+     * Returns result-collection specific for this service.
+     *
+     * @return \Pecee\Http\Rest\RestCollection
+     */
+    public function onCreateCollection() {
+        return new RestCollection($this->service);
+    }
+    /**
+     * @return self
+     */
+    public function onCreateItem() {
+        return new static($this->service);
     }
 
     /**
@@ -81,6 +80,7 @@ class RestItem implements IRestResult, IRestEventListener {
         if($this->id === null) {
             throw new RestException('Failed to update. Missing required argument "id".');
         }
+
         $this->row = $this->api($this->id, RestBase::METHOD_PUT, (array)$this->row)->getRow();
         return $this;
     }
@@ -97,36 +97,25 @@ class RestItem implements IRestResult, IRestEventListener {
     }
 
     /**
-     * Execute api call
-     *
-     * @param null $url
-     * @param string $method
-     * @param array|null $data
-     *
-     * @throws \Pecee\Http\Rest\RestException
-     * @return self
+     * @return RestBase
      */
-    public function api($url = null, $method = RestBase::METHOD_GET, array $data = array()) {
-        return $this->service->api($url, $method, $data);
-    }
-
-    /**
-     * Execute api call.
-     *
-     * Alias for $this->api();
-     *
-     * @return self
-     */
-    public function execute() {
-        return $this->api();
-    }
-
     public function getService() {
         return $this->service;
     }
 
+    /**
+     * @param RestBase $service
+     */
     public function setService(RestBase $service) {
         $this->service = $service;
+    }
+
+    public function api($url = null, $method = RestBase::METHOD_GET, array $data = array()) {
+        return $this->service->api($url, $method, $data);
+    }
+
+    public function execute() {
+        return $this->api();
     }
 
 }

@@ -5,19 +5,12 @@ Simple, fast and easy to use classes for providing basic functionality for talki
 Add the latest version of pecee-http-service to your ```composer.json```
 
 ```json
-{
-    "require": {
-        "pecee/http-service": "1.*"
-    },
-    "require-dev": {
-        "pecee/http-service": "1.*"
-    }
-}
+composer require pecee/http-service
 ```
 
 ## The MIT License (MIT)
 
-Copyright (c) 2015 Simon Sessingø / http-service
+Copyright (c) 2016 Simon Sessingø / Pecee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
