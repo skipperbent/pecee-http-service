@@ -67,7 +67,8 @@ class RestBase {
         }
 
         if($method === self::METHOD_GET && is_array($data)) {
-            $url .= '?'.http_build_query($data);
+            $separator = (strpos($url, '?') !== false) ? '&' : '?';
+            $url .= $separator . http_build_query($data);
         }
 
         $apiUrl = trim($this->getServiceUrl(), '/') . (($url !== null) ? '/' . trim($url, '/') : '');
