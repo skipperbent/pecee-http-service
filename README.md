@@ -12,6 +12,7 @@ Add the latest version of pecee-http-service to your project by running:
 - [tinder-php-sdk](http://www.github.com/skipperbent/tinder-php-sdk)
 - [happn-php-sdk](http://www.github.com/skipperbent/happn-php-sdk)
 - [ninjaimg-php-sdk](http://www.github.com/skipperbent/ninjaimg-php-sdk)
+- [pecee-dropbox-sdk](http://www.github.com/skipperbent/pecee-dropbox-sdk)
 
 
 ## The MIT License (MIT)
