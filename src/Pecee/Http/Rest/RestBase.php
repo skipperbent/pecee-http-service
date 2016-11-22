@@ -59,7 +59,6 @@ class RestBase {
             }
         } else {
             $data = array_merge($this->httpRequest->getPostData(), $data);
-            $data['_method'] = $method;
 
             if($method !== self::METHOD_GET) {
                 $this->httpRequest->setPostData($data);
