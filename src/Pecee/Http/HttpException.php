@@ -3,17 +3,17 @@ namespace Pecee\Http;
 
 class HttpException extends \Exception
 {
-	protected $httpResponse;
+    protected $httpResponse;
 
-	public function __construct($message, $code = 0, HttpResponse $httpResponse = null)
-	{
-		parent::__construct($message, $code);
+    public function __construct($message, $code = 0, HttpResponse $httpResponse = null)
+    {
+        parent::__construct($message, $code);
 
-		$this->httpResponse = $httpResponse;
-	}
+        $this->httpResponse = $httpResponse;
+    }
 
-	public function getHttpResponse()
-	{
-		return $this->httpResponse;
-	}
+    public function getHttpResponse()
+    {
+        return $this->httpResponse;
+    }
 }

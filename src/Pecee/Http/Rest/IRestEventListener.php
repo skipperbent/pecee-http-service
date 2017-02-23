@@ -2,10 +2,11 @@
 
 namespace Pecee\Http\Rest;
 
-interface IRestEventListener {
+interface IRestEventListener
+{
 
-	public function onCreateCollection();
+    public function onCreateCollection();
 
-	public function onCreateItem();
+    public function onCreateItem();
 
 }
