@@ -1,28 +1,32 @@
 <?php
 namespace Pecee\Http\Rest;
 
-class RestCollection implements IRestResult {
-
+class RestCollection implements IRestResult
+{
     /**
      * @var RestBase
      */
     protected $service;
     protected $rows;
 
-    public function __construct(RestBase $service) {
+    public function __construct(RestBase $service)
+    {
         $this->service = $service;
-        $this->rows = array();
+        $this->rows    = array();
     }
 
-    public function getRow($index) {
-        return (isset($this->rows[$index])) ? $this->rows[$index] : null;
+    public function getRow($index)
+    {
+        return isset($this->rows[$index]) ? $this->rows[$index] : null;
     }
 
-    public function getRows() {
+    public function getRows()
+    {
         return $this->rows;
     }
 
-    public function setRows(array $rows) {
+    public function setRows(array $rows)
+    {
         $this->rows = $rows;
     }
 
@@ -33,10 +37,11 @@ class RestCollection implements IRestResult {
      * @param string $method
      * @param array|null $data
      *
-     * @throws \Pecee\Http\Rest\RestException
+     * @throws RestException
      * @return static
      */
-    public function api($url = null, $method = RestBase::METHOD_GET, array $data = array()) {
+    public function api($url = null, $method = RestBase::METHOD_GET, array $data = array())
+    {
         return $this->service->api($url, $method, $data);
     }
 
@@ -46,16 +51,20 @@ class RestCollection implements IRestResult {
      * Alias for $this->api();
      *
      * @return static
+     * @throws RestException
      */
-    public function execute() {
+    public function execute()
+    {
         return $this->api();
     }
 
-    public function getService() {
+    public function getService()
+    {
         return $this->service;
     }
 
-    public function setService(RestBase $service) {
+    public function setService(RestBase $service)
+    {
         $this->service = $service;
     }
 }

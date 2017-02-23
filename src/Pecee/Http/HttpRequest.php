@@ -3,363 +3,381 @@ namespace Pecee\Http;
 
 class HttpRequest
 {
-	protected $url;
-	protected $method;
-	protected $headers;
-	protected $options;
-	protected $rawData;
-	protected $data;
-	protected $timeout;
-	protected $returnHeader;
-	protected $contentType;
+    protected $url;
+    protected $method;
+    protected $headers;
+    protected $options;
+    protected $rawData;
+    protected $data;
+    protected $timeout;
+    protected $returnHeader;
+    protected $contentType;
 
-	public function __construct($url = null)
-	{
-		if (!function_exists('curl_init')) {
-			throw new \Exception('This service requires the CURL PHP extension.');
-		}
+    public function __construct($url = null)
+    {
+        if (function_exists('curl_init') === false) {
+            throw new \ErrorException('This service requires the CURL PHP extension.');
+        }
 
-		// Ensure no PHP timeout
-		set_time_limit(0);
+        // Disable PHP timeout
+        set_time_limit(0);
 
-		$this->reset();
-		$this->url = $url;
-	}
+        $this->reset();
+        $this->url = $url;
+    }
 
-	public function reset()
-	{
-		$this->url = null;
-		$this->options = [];
-		$this->headers = [];
-		$this->data = [];
-		$this->rawData = null;
-		$this->method = null;
-		$this->returnHeader = true;
-		$this->contentType = null;
-	}
+    public function reset()
+    {
+        $this->url          = null;
+        $this->options      = [];
+        $this->headers      = [];
+        $this->data         = [];
+        $this->rawData      = null;
+        $this->method       = null;
+        $this->returnHeader = true;
+        $this->contentType  = null;
+    }
 
-	/**
-	 * Add header
-	 * @param string $header
-	 * @return static $this
-	 */
-	public function addHeader($header)
-	{
-		$this->headers[] = $header;
+    /**
+     * Add header
+     *
+     * @param string $header
+     *
+     * @return static $this
+     */
+    public function addHeader($header)
+    {
+        $this->headers[] = $header;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set headers array
-	 * @param array $headers
-	 * @return static $this
-	 */
-	public function setHeaders(array $headers)
-	{
-		$this->headers = $headers;
+    /**
+     * Set headers array
+     *
+     * @param array $headers
+     *
+     * @return static $this
+     */
+    public function setHeaders(array $headers)
+    {
+        $this->headers = $headers;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get all headers
-	 * @return array
-	 */
-	public function getHeaders()
-	{
-		return $this->headers;
-	}
+    /**
+     * Get all headers
+     * @return array
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
 
-	/**
-	 * Add curl option
-	 *
-	 * @param string $option
-	 * @param string $value
-	 * @return static $this
-	 */
-	public function addOption($option, $value)
-	{
-		$this->options[$option] = $value;
+    /**
+     * Add curl option
+     *
+     * @param string $option
+     * @param string $value
+     *
+     * @return static $this
+     */
+    public function addOption($option, $value)
+    {
+        $this->options[$option] = $value;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set curl options
-	 *
-	 * @param array $options
-	 * @return static $this
-	 */
-	public function setOptions(array $options)
-	{
-		$this->options = $options;
+    /**
+     * Set curl options
+     *
+     * @param array $options
+     *
+     * @return static $this
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Add post data
-	 *
-	 * @param string $key
-	 * @param string $value
-	 * @return static $this
-	 */
-	public function addPostData($key, $value)
-	{
-		$this->data[$key] = $value;
+    /**
+     * Add post data
+     *
+     * @param string $key
+     * @param string $value
+     *
+     * @return static $this
+     */
+    public function addPostData($key, $value)
+    {
+        $this->data[$key] = $value;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set postdata
-	 *
-	 * @param array $data
-	 * @return static $this
-	 */
-	public function setPostData(array $data)
-	{
-		$this->data = $data;
+    /**
+     * Set postdata
+     *
+     * @param array $data
+     *
+     * @return static $this
+     */
+    public function setPostData(array $data)
+    {
+        $this->data = $data;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set raw postdata
-	 * @param string $data
-	 * @return static $this;
-	 */
-	public function setRawPostData($data)
-	{
-		$this->rawData = $data;
+    /**
+     * Set raw postdata
+     *
+     * @param string $data
+     *
+     * @return static $this;
+     */
+    public function setRawPostData($data)
+    {
+        $this->rawData = $data;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get post-data
-	 *
-	 * @return array
-	 */
-	public function getPostData()
-	{
-		return $this->data;
-	}
+    /**
+     * Get post-data
+     *
+     * @return array
+     */
+    public function getPostData()
+    {
+        return $this->data;
+    }
 
-	/**
-	 * Get raw post-data
-	 *
-	 * @return string
-	 */
-	public function getRawPostData()
-	{
-		return $this->rawData;
-	}
+    /**
+     * Get raw post-data
+     *
+     * @return string
+     */
+    public function getRawPostData()
+    {
+        return $this->rawData;
+    }
 
-	/**
-	 * Make post request
-	 *
-	 * @param bool $return
-	 * @return HttpResponse $this
-	 */
-	public function post($return = false)
-	{
-		$this->options[CURLOPT_POST] = true;
+    /**
+     * Make post request
+     *
+     * @param bool $return
+     *
+     * @return HttpResponse $this
+     */
+    public function post($return = false)
+    {
+        $this->options[CURLOPT_POST] = true;
 
-		return $this->execute($return);
-	}
+        return $this->execute($return);
+    }
 
-	/**
-	 * Make get request
-	 *
-	 * @param bool $return
-	 * @return HttpResponse
-	 */
-	public function get($return = false)
-	{
-		return $this->execute($return);
-	}
+    /**
+     * Make get request
+     *
+     * @param bool $return
+     *
+     * @return HttpResponse
+     */
+    public function get($return = false)
+    {
+        return $this->execute($return);
+    }
 
-	/**
-	 * Set timeout
-	 * @param int $timeout
-	 * @return static $this
-	 */
-	public function setTimeout($timeout)
-	{
-		$this->timeout = $timeout;
+    /**
+     * Set timeout
+     *
+     * @param int $timeout
+     *
+     * @return static $this
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set method
-	 *
-	 * @param string $method
-	 * @return static $this
-	 */
-	public function setMethod($method)
-	{
-		$this->method = $method;
+    /**
+     * Set method
+     *
+     * @param string $method
+     *
+     * @return static $this
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set content-type
-	 *
-	 * @param string $contentType
-	 * @return static $this
-	 */
-	public function setContentType($contentType)
-	{
-		$this->contentType = strtolower($contentType);
+    /**
+     * Set content-type
+     *
+     * @param string $contentType
+     *
+     * @return static $this
+     */
+    public function setContentType($contentType)
+    {
+        $this->contentType = strtolower($contentType);
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get content-type
-	 *
-	 * @return string
-	 */
-	public function getContentType()
-	{
-		return $this->contentType;
-	}
+    /**
+     * Get content-type
+     *
+     * @return string
+     */
+    public function getContentType()
+    {
+        return $this->contentType;
+    }
 
-	/**
-	 * Get url
-	 *
-	 * @return string
-	 */
-	public function getUrl()
-	{
-		return $this->url;
-	}
+    /**
+     * Get url
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
 
-	/**
-	 * @param string $url
-	 * @return static $this
-	 */
-	public function setUrl($url)
-	{
-		$this->url = $url;
+    /**
+     * @param string $url
+     *
+     * @return static $this
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Defines if headers should be parsed when receiving response.
-	 *
-	 * @param bool $bool
-	 * @return static $this
-	 */
-	public function setReturnHeader($bool)
-	{
-		$this->returnHeader = $bool;
+    /**
+     * Defines if headers should be parsed when receiving response.
+     *
+     * @param bool $bool
+     *
+     * @return static $this
+     */
+    public function setReturnHeader($bool)
+    {
+        $this->returnHeader = $bool;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set basic authentication
-	 *
-	 * @param $username
-	 * @param $password
-	 * @return HttpResponse
-	 */
-	public function setBasicAuth($username, $password)
-	{
-		$this->addHeader('Authorization: Basic ' . base64_encode(sprintf('%s:%s', $username, $password)));
-	}
+    /**
+     * Set basic authentication
+     *
+     * @param $username
+     * @param $password
+     *
+     * @return static $this
+     */
+    public function setBasicAuth($username, $password)
+    {
+        $this->addHeader('Authorization: Basic ' . base64_encode(sprintf('%s:%s', $username, $password)));
 
-	public function execute($return = true)
-	{
-		$handle = curl_init();
+        return $this;
+    }
 
-		if ($this->url === null) {
-			throw new \InvalidArgumentException('Missing required property: url');
-		}
+    public function execute($return = true)
+    {
+        $handle = curl_init();
 
-		if (strtolower($this->method) !== 'get') {
-			$this->url .= ((strpos($this->url, '?') === false) ? '?' : '&');
-		}
+        if ($this->url === null) {
+            throw new \InvalidArgumentException('Missing required property: url');
+        }
 
-		curl_setopt($handle, CURLOPT_URL, $this->url);
+        if (strtolower($this->method) !== 'get') {
+            $this->url .= ((strpos($this->url, '?') === false) ? '?' : '&');
+        }
 
-		$response = new HttpResponse($handle);
+        curl_setopt($handle, CURLOPT_URL, $this->url);
 
-		if ($this->contentType !== null) {
-			$this->addHeader('Content-Type: ' . $this->contentType);
-		}
+        $response = new HttpResponse($handle);
 
-		if ($this->returnHeader) {
-			curl_setopt($handle, CURLOPT_HEADER, true);
-			curl_setopt($handle, CURLOPT_HEADERFUNCTION, [&$response, 'parseHeader']);
-		}
+        if ($this->contentType !== null) {
+            $this->addHeader('Content-Type: ' . $this->contentType);
+        }
 
-		if ($return) {
-			curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-		}
+        if ($this->returnHeader) {
+            curl_setopt($handle, CURLOPT_HEADER, true);
+            curl_setopt($handle, CURLOPT_HEADERFUNCTION, [&$response, 'parseHeader']);
+        }
 
-		if ($this->timeout) {
-			curl_setopt($handle, CURLOPT_CONNECTTIMEOUT_MS, $this->timeout);
-			curl_setopt($handle, CURLOPT_TIMEOUT_MS, $this->timeout);
-		}
+        if ($return) {
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        }
 
-		// Add request data
-		if ($this->method && strtolower($this->method) !== 'get') {
+        if ($this->timeout) {
+            curl_setopt($handle, CURLOPT_CONNECTTIMEOUT_MS, $this->timeout);
+            curl_setopt($handle, CURLOPT_TIMEOUT_MS, $this->timeout);
+        }
 
-			switch ($this->contentType) {
-				default:
-					$data = $this->rawData;
-					break;
-				case 'application/json':
-					$data = json_encode($this->data);
-					break;
-				case 'application/x-www-form-urlencoded':
-					$data = http_build_query($this->data);
-					break;
-			}
+        // Add request data
+        if ($this->method && strtolower($this->method) !== 'get') {
 
-			foreach ($this->headers as $key => $header) {
-				if (stripos($header, 'content-length:') !== false) {
-					unset($this->headers[$key]);
-				}
-			}
+            switch ($this->contentType) {
+                default:
+                    $data = $this->rawData;
+                    break;
+                case 'application/json':
+                    $data = json_encode($this->data);
+                    break;
+                case 'application/x-www-form-urlencoded':
+                    $data = http_build_query($this->data);
+                    break;
+            }
 
-			$this->addHeader('Content-length: ' . strlen($data));
+            foreach ((array)$this->headers as $key => $header) {
+                if (stripos($header, 'content-length:') !== false) {
+                    unset($this->headers[$key]);
+                }
+            }
 
-			curl_setopt($handle, CURLOPT_CUSTOMREQUEST, $this->method);
-			curl_setopt($handle, CURLOPT_POST, true);
-			curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
-		}
+            $this->addHeader('Content-length: ' . strlen($data));
 
-		// Add headers
-		if (count($this->headers)) {
-			curl_setopt($handle, CURLOPT_HTTPHEADER, $this->headers);
-		}
+            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, $this->method);
+            curl_setopt($handle, CURLOPT_POST, true);
+            curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
+        }
 
-		// Add custom curl options
-		if (count($this->options)) {
-			foreach ($this->options as $option => $value) {
-				curl_setopt($handle, $option, $value);
-			}
-		}
+        // Add headers
+        if (count($this->headers)) {
+            curl_setopt($handle, CURLOPT_HTTPHEADER, $this->headers);
+        }
 
-		$output = curl_exec($handle);
+        // Add custom curl options
+        if (count($this->options)) {
+            foreach ((array)$this->options as $option => $value) {
+                curl_setopt($handle, $option, $value);
+            }
+        }
 
-		$response->setInfo(curl_getinfo($handle));
-		$response->setResponse($output, $this->returnHeader);
+        $output = curl_exec($handle);
 
-		curl_close($handle);
+        $response->setInfo(curl_getinfo($handle))->setResponse($output, $this->returnHeader);
 
-		unset($output);
-		unset($handle);
+        curl_close($handle);
+        unset($output, $handle);
 
-		return $response;
-	}
+        return $response;
+    }
 
 }
