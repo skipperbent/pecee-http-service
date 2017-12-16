@@ -1,9 +1,10 @@
 <?php
 namespace Pecee\Http\Rest;
 
+use Pecee\Http\HttpException;
 use Pecee\Http\HttpRequest;
 
-class RestBase
+class RestBase implements IRestBase
 {
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
@@ -33,7 +34,7 @@ class RestBase
      * Get service url
      * @return string
      */
-    public function getServiceUrl()
+    public function getServiceUrl() : string
     {
         return $this->serviceUrl;
     }
@@ -45,7 +46,7 @@ class RestBase
      *
      * @return static$this
      */
-    public function setServiceUrl($serviceUrl)
+    public function setServiceUrl($serviceUrl) : self
     {
         $this->serviceUrl = $serviceUrl;
 
@@ -55,7 +56,7 @@ class RestBase
     /**
      * @return HttpRequest
      */
-    public function getHttpRequest()
+    public function getHttpRequest() : HttpRequest
     {
         return $this->httpRequest;
     }
@@ -67,12 +68,12 @@ class RestBase
      * @param string $method
      * @param array|null $data
      *
-     * @throws \Pecee\Http\Rest\RestException
+     * @throws HttpException
      * @return \Pecee\Http\HttpResponse|mixed
      */
     public function api($url = null, $method = self::METHOD_GET, array $data = array())
     {
-        if (in_array($method, static::$METHODS, true) === false) {
+        if (\in_array($method, static::$METHODS, true) === false) {
             throw new RestException('Invalid request method');
         }
 
@@ -83,16 +84,16 @@ class RestBase
                 $this->httpRequest->setRawPostData($this->httpRequest->getRawPostData());
             }
         } else {
-            $data = array_merge($this->httpRequest->getPostData(), $data);
+            $data = \array_merge($this->httpRequest->getPostData(), $data);
 
             if ($method !== static::METHOD_GET) {
                 $this->httpRequest->setPostData($data);
             }
         }
 
-        if ($method === static::METHOD_GET && is_array($data)) {
-            $separator = (strpos($url, '?') !== false) ? '&' : '?';
-            $url .= $separator . http_build_query($data);
+        if ($method === static::METHOD_GET && \is_array($data) === true) {
+            $separator = (\strpos($url, '?') !== false) ? '&' : '?';
+            $url .= $separator . \http_build_query($data);
         }
 
         $apiUrl = trim($this->getServiceUrl(), '/') . (($url !== null) ? '/' . trim($url, '/') : '');
@@ -100,7 +101,7 @@ class RestBase
         $this->httpRequest->setUrl($apiUrl);
         $this->httpRequest->setMethod($method);
 
-        return $this->httpRequest->execute(true);
+        return $this->httpRequest->execute();
 
     }
 

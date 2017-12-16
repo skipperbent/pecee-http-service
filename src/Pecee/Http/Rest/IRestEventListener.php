@@ -5,8 +5,8 @@ namespace Pecee\Http\Rest;
 interface IRestEventListener
 {
 
-    public function onCreateCollection();
+    public function onCreateCollection() : IRestCollection;
 
-    public function onCreateItem();
+    public function onCreateItem() : IRestResult;
 
 }

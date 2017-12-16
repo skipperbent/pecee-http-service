@@ -1,7 +1,10 @@
 <?php
+
 namespace Pecee\Http\Rest;
 
-class RestCollection implements IRestResult
+use Pecee\Http\HttpException;
+
+class RestCollection implements IRestResult, IRestCollection
 {
     /**
      * @var RestBase
@@ -12,22 +15,35 @@ class RestCollection implements IRestResult
     public function __construct(RestBase $service)
     {
         $this->service = $service;
-        $this->rows    = array();
+        $this->rows = [];
     }
 
-    public function getRow($index)
+    /**
+     * @param int $index
+     * @return mixed
+     */
+    public function getRow($index): mixed
     {
-        return isset($this->rows[$index]) ? $this->rows[$index] : null;
+        return $this->rows[$index] ?? null;
     }
 
-    public function getRows()
+    /**
+     * @return array
+     */
+    public function getRows(): array
     {
         return $this->rows;
     }
 
+    /**
+     * @param array $rows
+     * @return static
+     */
     public function setRows(array $rows)
     {
         $this->rows = $rows;
+
+        return $this;
     }
 
     /**
@@ -37,10 +53,10 @@ class RestCollection implements IRestResult
      * @param string $method
      * @param array|null $data
      *
-     * @throws RestException
+     * @throws HttpException
      * @return static
      */
-    public function api($url = null, $method = RestBase::METHOD_GET, array $data = array())
+    public function api($url = null, $method = RestBase::METHOD_GET, array $data = []): self
     {
         return $this->service->api($url, $method, $data);
     }
@@ -51,20 +67,29 @@ class RestCollection implements IRestResult
      * Alias for $this->api();
      *
      * @return static
-     * @throws RestException
+     * @throws HttpException
      */
-    public function execute()
+    public function execute(): self
     {
         return $this->api();
     }
 
-    public function getService()
+    /**
+     * @return IRestBase
+     */
+    public function getService(): IRestBase
     {
         return $this->service;
     }
 
-    public function setService(RestBase $service)
+    /**
+     * @param IRestBase $service
+     * @return static
+     */
+    public function setService(IRestBase $service): self
     {
         $this->service = $service;
+
+        return $this;
     }
 }

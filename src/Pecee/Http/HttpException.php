@@ -12,6 +12,9 @@ class HttpException extends \Exception
         $this->httpResponse = $httpResponse;
     }
 
+    /**
+     * @return HttpResponse|null
+     */
     public function getHttpResponse()
     {
         return $this->httpResponse;

@@ -9,6 +9,6 @@ interface IRestResult
 
     public function execute();
 
-    public function getService();
+    public function getService() : IRestBase;
 
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Pecee\Http\Rest;
 
+use Pecee\Http\HttpException;
+
 class RestItem implements IRestResult, IRestEventListener
 {
     protected $primaryKey = 'id';
@@ -40,17 +42,17 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * Returns result-collection specific for this service.
      *
-     * @return \Pecee\Http\Rest\RestCollection
+     * @return IRestCollection
      */
-    public function onCreateCollection()
+    public function onCreateCollection() : IRestCollection
     {
         return new RestCollection($this->service);
     }
 
     /**
-     * @return self
+     * @return IRestResult
      */
-    public function onCreateItem()
+    public function onCreateItem() : IRestResult
     {
         return new static($this->service);
     }
@@ -60,14 +62,12 @@ class RestItem implements IRestResult, IRestEventListener
      *
      * @param string $id
      *
-     * @throws \Pecee\Http\Rest\RestException
+     * @throws HttpException
      * @return static
      */
     public function getById($id)
     {
-        if ($this->{$this->primaryKey} === null) {
-            throw new RestException(sprintf('Missing required argument "%s"', $this->primaryKey));
-        }
+
         $this->row = $this->api($id)->getRow();
 
         return $this;
@@ -76,10 +76,10 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * Delete item
      *
-     * @throws \Pecee\Http\Rest\RestException
+     * @throws HttpException
      * @return static
      */
-    public function delete()
+    public function delete() : self
     {
         if ($this->{$this->primaryKey} === null) {
             throw new RestException(sprintf('Failed to delete. Missing required argument "%s"', $this->primaryKey));
@@ -92,10 +92,10 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * Update item
      *
-     * @throws \Pecee\Http\Rest\RestException
+     * @throws HttpException
      * @return static
      */
-    public function update()
+    public function update() : self
     {
         if ($this->{$this->primaryKey} === null) {
             throw new RestException(sprintf('Failed to update. Missing required argument "%s"', $this->primaryKey));
@@ -109,10 +109,10 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * Save item
      *
-     * @throws \Pecee\Http\Rest\RestException
+     * @throws HttpException
      * @return static
      */
-    public function save()
+    public function save() : self
     {
         $this->row = $this->api(null, RestBase::METHOD_POST, (array)$this->row)->getRow();
 
@@ -120,26 +120,37 @@ class RestItem implements IRestResult, IRestEventListener
     }
 
     /**
-     * @return RestBase
+     * @return IRestBase
      */
-    public function getService()
+    public function getService() : IRestBase
     {
         return $this->service;
     }
 
     /**
-     * @param RestBase $service
+     * @param IRestBase $service
      */
-    public function setService(RestBase $service)
+    public function setService(IRestBase $service)
     {
         $this->service = $service;
     }
 
+    /**
+     * @param null $url
+     * @param string $method
+     * @param array $data
+     * @return mixed|\Pecee\Http\HttpResponse
+     * @throws HttpException
+     */
     public function api($url = null, $method = RestBase::METHOD_GET, array $data = array())
     {
         return $this->service->api($url, $method, $data);
     }
 
+    /**
+     * @return mixed|\Pecee\Http\HttpResponse
+     * @throws HttpException
+     */
     public function execute()
     {
         return $this->api();

@@ -1,4 +1,5 @@
 <?php
+
 namespace Pecee\Http;
 
 class HttpRequest
@@ -13,29 +14,33 @@ class HttpRequest
     protected $returnHeader;
     protected $contentType;
 
+    /**
+     * HttpRequest constructor.
+     * @param null $url
+     * @throws \ErrorException
+     */
     public function __construct($url = null)
     {
-        if (function_exists('curl_init') === false) {
+        if (\function_exists('curl_init') === false) {
             throw new \ErrorException('This service requires the CURL PHP extension.');
         }
 
-        // Disable PHP timeout
-        set_time_limit(0);
+        set_time_limit($this->timeout);
 
         $this->reset();
         $this->url = $url;
     }
 
-    public function reset()
+    public function reset(): void
     {
-        $this->url          = null;
-        $this->options      = [];
-        $this->headers      = [];
-        $this->data         = [];
-        $this->rawData      = null;
-        $this->method       = null;
+        $this->url = null;
+        $this->options = [];
+        $this->headers = [];
+        $this->data = [];
+        $this->rawData = null;
+        $this->method = null;
         $this->returnHeader = true;
-        $this->contentType  = null;
+        $this->contentType = null;
     }
 
     /**
@@ -45,7 +50,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function addHeader($header)
+    public function addHeader($header): self
     {
         $this->headers[] = $header;
 
@@ -59,7 +64,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): self
     {
         $this->headers = $headers;
 
@@ -70,7 +75,7 @@ class HttpRequest
      * Get all headers
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -83,7 +88,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function addOption($option, $value)
+    public function addOption($option, $value): self
     {
         $this->options[$option] = $value;
 
@@ -97,7 +102,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): self
     {
         $this->options = $options;
 
@@ -112,7 +117,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function addPostData($key, $value)
+    public function addPostData($key, $value): self
     {
         $this->data[$key] = $value;
 
@@ -126,7 +131,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setPostData(array $data)
+    public function setPostData(array $data): self
     {
         $this->data = $data;
 
@@ -140,7 +145,7 @@ class HttpRequest
      *
      * @return static $this;
      */
-    public function setRawPostData($data)
+    public function setRawPostData($data): self
     {
         $this->rawData = $data;
 
@@ -152,7 +157,7 @@ class HttpRequest
      *
      * @return array
      */
-    public function getPostData()
+    public function getPostData(): array
     {
         return $this->data;
     }
@@ -160,7 +165,7 @@ class HttpRequest
     /**
      * Get raw post-data
      *
-     * @return string
+     * @return string|null
      */
     public function getRawPostData()
     {
@@ -172,9 +177,10 @@ class HttpRequest
      *
      * @param bool $return
      *
+     * @throws HttpException
      * @return HttpResponse $this
      */
-    public function post($return = false)
+    public function post($return = false): HttpResponse
     {
         $this->options[CURLOPT_POST] = true;
 
@@ -185,10 +191,10 @@ class HttpRequest
      * Make get request
      *
      * @param bool $return
-     *
+     * @throws HttpException
      * @return HttpResponse
      */
-    public function get($return = false)
+    public function get($return = false): HttpResponse
     {
         return $this->execute($return);
     }
@@ -200,7 +206,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setTimeout($timeout)
+    public function setTimeout($timeout): self
     {
         $this->timeout = $timeout;
 
@@ -214,9 +220,44 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setMethod($method)
+    public function setMethod($method): self
     {
         $this->method = $method;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRawData()
+    {
+        return $this->rawData;
+    }
+
+    /**
+     * @param mixed $rawData
+     */
+    public function setRawData($rawData)
+    {
+        $this->rawData = $rawData;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData() : array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array $data
+     * @return static $this
+     */
+    public function setData(array $data) : self
+    {
+        $this->data = $data;
 
         return $this;
     }
@@ -228,11 +269,20 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setContentType($contentType)
+    public function setContentType($contentType): self
     {
-        $this->contentType = strtolower($contentType);
+        $this->contentType = \strtolower($contentType);
 
         return $this;
+    }
+
+    /**
+     * Get request method
+     * @return string|null
+     */
+    public function getMethod()
+    {
+        return $this->method;
     }
 
     /**
@@ -260,7 +310,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setUrl($url)
+    public function setUrl($url): self
     {
         $this->url = $url;
 
@@ -274,7 +324,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setReturnHeader($bool)
+    public function setReturnHeader($bool): self
     {
         $this->returnHeader = $bool;
 
@@ -289,45 +339,51 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setBasicAuth($username, $password)
+    public function setBasicAuth($username, $password): self
     {
-        $this->addHeader('Authorization: Basic ' . base64_encode(sprintf('%s:%s', $username, $password)));
+        $this->addHeader('Authorization: Basic ' . \base64_encode(\sprintf('%s:%s', $username, $password)));
 
         return $this;
     }
 
-    public function execute($return = true)
+    /**
+     * Execute
+     * @param bool $return
+     * @throws HttpException
+     * @return HttpResponse
+     */
+    public function execute($return = true): HttpResponse
     {
-        $handle = curl_init();
+        $handle = \curl_init();
 
         if ($this->url === null) {
-            throw new \InvalidArgumentException('Missing required property: url');
+            throw new HttpException('Missing required property: url');
         }
 
-        if (strtolower($this->method) !== 'get') {
+        if (\strtolower($this->method) === 'get' && \count($this->data) > 0) {
             $this->url .= ((strpos($this->url, '?') === false) ? '?' : '&');
         }
 
-        curl_setopt($handle, CURLOPT_URL, $this->url);
+        \curl_setopt($handle, CURLOPT_URL, $this->url);
 
-        $response = new HttpResponse($handle);
+        $response = new HttpResponse();
 
         if ($this->contentType !== null) {
             $this->addHeader('Content-Type: ' . $this->contentType);
         }
 
-        if ($this->returnHeader) {
-            curl_setopt($handle, CURLOPT_HEADER, true);
-            curl_setopt($handle, CURLOPT_HEADERFUNCTION, [&$response, 'parseHeader']);
+        if ($this->returnHeader === true) {
+            \curl_setopt($handle, CURLOPT_HEADER, true);
+            \curl_setopt($handle, CURLOPT_HEADERFUNCTION, [&$response, 'parseHeader']);
         }
 
-        if ($return) {
-            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        if ($return === true) {
+            \curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         }
 
         if ($this->timeout) {
-            curl_setopt($handle, CURLOPT_CONNECTTIMEOUT_MS, $this->timeout);
-            curl_setopt($handle, CURLOPT_TIMEOUT_MS, $this->timeout);
+            \curl_setopt($handle, CURLOPT_CONNECTTIMEOUT_MS, $this->timeout);
+            \curl_setopt($handle, CURLOPT_TIMEOUT_MS, $this->timeout);
         }
 
         // Add request data
@@ -338,43 +394,44 @@ class HttpRequest
                     $data = $this->rawData;
                     break;
                 case 'application/json':
-                    $data = json_encode($this->data);
+                    $data = \json_encode($this->data);
                     break;
                 case 'application/x-www-form-urlencoded':
-                    $data = http_build_query($this->data);
+                    $data = \http_build_query($this->data);
                     break;
             }
 
             foreach ((array)$this->headers as $key => $header) {
-                if (stripos($header, 'content-length:') !== false) {
+                if (\stripos($header, 'Content-Length:') !== false) {
                     unset($this->headers[$key]);
                 }
             }
 
-            $this->addHeader('Content-length: ' . strlen($data));
+            $this->addHeader('Content-Length: ' . \strlen($data));
 
-            curl_setopt($handle, CURLOPT_CUSTOMREQUEST, $this->method);
-            curl_setopt($handle, CURLOPT_POST, true);
-            curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
+            \curl_setopt($handle, CURLOPT_CUSTOMREQUEST, $this->method);
+            \curl_setopt($handle, CURLOPT_POST, true);
+            \curl_setopt($handle, CURLOPT_POSTFIELDS, $data);
         }
 
         // Add headers
-        if (count($this->headers)) {
-            curl_setopt($handle, CURLOPT_HTTPHEADER, $this->headers);
+        if (\count($this->headers) > 0) {
+            \curl_setopt($handle, CURLOPT_HTTPHEADER, $this->headers);
         }
 
         // Add custom curl options
-        if (count($this->options)) {
+        if (\count($this->options) > 0) {
             foreach ((array)$this->options as $option => $value) {
-                curl_setopt($handle, $option, $value);
+                \curl_setopt($handle, $option, $value);
             }
         }
 
-        $output = curl_exec($handle);
+        $output = \curl_exec($handle);
 
-        $response->setInfo(curl_getinfo($handle))->setResponse($output, $this->returnHeader);
+        $response->setInfo(\curl_getinfo($handle))->setResponse($output, $this->returnHeader);
 
-        curl_close($handle);
+        \curl_close($handle);
+
         unset($output, $handle);
 
         return $response;

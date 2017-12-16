@@ -7,58 +7,58 @@ class HttpResponse
     protected $info = [];
     protected $headers = [];
 
-    public function parseHeader($handle, $header)
+    public function parseHeader($handle, $header) : int
     {
         $details = explode(':', $header, 2);
 
-        if (count($details) === 2) {
+        if (\count($details) === 2) {
             $key   = trim($details[0]);
             $value = trim($details[1]);
 
             $this->headers[$key] = $value;
         }
 
-        return strlen($header);
+        return \strlen($header);
     }
 
-    public function getInfo()
+    public function getInfo() : array
     {
         return $this->info;
     }
 
-    public function getResponse()
+    public function getResponse() : HttpResponse
     {
         return $this->response;
     }
 
-    public function getUrl()
+    public function getUrl() : string
     {
-        return isset($this->info['url']) ? $this->info['url'] : null;
+        return $this->info['url'] ?? null;
     }
 
     public function getContentType()
     {
-        return isset($this->info['content_type']) ? $this->info['content_type'] : null;
+        return $this->info['content_type'] ?? null;
     }
 
     public function getRequestSize()
     {
-        return isset($this->info['request_size']) ? $this->info['request_size'] : null;
+        return $this->info['request_size'] ?? null;
     }
 
     public function getHeaderSize()
     {
-        return isset($this->info['header_size']) ? $this->info['header_size'] : null;
+        return $this->info['header_size'] ?? null;
     }
 
     public function getStatusCode()
     {
-        return isset($this->info['http_code']) ? $this->info['http_code'] : null;
+        return $this->info['http_code'] ?? null;
     }
 
     public function getTotalTime()
     {
-        return isset($this->info['total_time']) ? $this->info['total_time'] : null;
+        return $this->info['total_time'] ?? null;
     }
 
     /**
@@ -67,7 +67,7 @@ class HttpResponse
      * @param array $info
      * @return static $this
      */
-    public function setInfo(array $info)
+    public function setInfo(array $info) : self
     {
         $this->info = $info;
         return $this;
@@ -96,7 +96,7 @@ class HttpResponse
      * Get headers
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders() : array
     {
         return $this->headers;
     }
@@ -108,7 +108,7 @@ class HttpResponse
      * @param bool $removeHeaders
      * @return static $this
      */
-    public function setResponse($response, $removeHeaders = false)
+    public function setResponse($response, $removeHeaders = false) : self
     {
         $this->response = $response;
 

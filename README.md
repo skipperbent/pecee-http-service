@@ -1,7 +1,9 @@
 # pecee-http-service
+
 Simple, fast and easy to use classes for providing basic functionality for talking with remote api's including the REST standard.
 
 ## Installation
+
 Add the latest version of pecee-http-service to your project by running:
 
 ```composer require pecee/http-service```
