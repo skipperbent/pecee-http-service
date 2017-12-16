@@ -19,9 +19,6 @@ class HttpRequest
             throw new \ErrorException('This service requires the CURL PHP extension.');
         }
 
-        // Disable PHP timeout
-        set_time_limit(0);
-
         $this->reset();
         $this->url = $url;
     }
@@ -304,28 +301,31 @@ class HttpRequest
             throw new \InvalidArgumentException('Missing required property: url');
         }
 
-        if (strtolower($this->method) !== 'get') {
+        if (strtolower($this->method) === 'get' && count($this->getPostData()) > 0) {
             $this->url .= ((strpos($this->url, '?') === false) ? '?' : '&');
         }
 
         curl_setopt($handle, CURLOPT_URL, $this->url);
 
-        $response = new HttpResponse($handle);
+        $response = new HttpResponse();
 
         if ($this->contentType !== null) {
             $this->addHeader('Content-Type: ' . $this->contentType);
         }
 
-        if ($this->returnHeader) {
+        if ($this->returnHeader === true) {
             curl_setopt($handle, CURLOPT_HEADER, true);
             curl_setopt($handle, CURLOPT_HEADERFUNCTION, [&$response, 'parseHeader']);
         }
 
-        if ($return) {
+        if ($return === true) {
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         }
 
-        if ($this->timeout) {
+        if ($this->timeout !== null && $this->timeout > 0) {
+            // Disable PHP timeout
+            set_time_limit($this->timeout);
+
             curl_setopt($handle, CURLOPT_CONNECTTIMEOUT_MS, $this->timeout);
             curl_setopt($handle, CURLOPT_TIMEOUT_MS, $this->timeout);
         }
@@ -359,12 +359,12 @@ class HttpRequest
         }
 
         // Add headers
-        if (count($this->headers)) {
+        if (count($this->headers) > 0) {
             curl_setopt($handle, CURLOPT_HTTPHEADER, $this->headers);
         }
 
         // Add custom curl options
-        if (count($this->options)) {
+        if (count($this->options) > 0) {
             foreach ((array)$this->options as $option => $value) {
                 curl_setopt($handle, $option, $value);
             }
@@ -375,6 +375,7 @@ class HttpRequest
         $response->setInfo(curl_getinfo($handle))->setResponse($output, $this->returnHeader);
 
         curl_close($handle);
+
         unset($output, $handle);
 
         return $response;
