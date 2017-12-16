@@ -1,4 +1,5 @@
 <?php
+
 namespace Pecee\Http;
 
 class HttpResponse
@@ -12,10 +13,14 @@ class HttpResponse
         $details = explode(':', $header, 2);
 
         if (count($details) === 2) {
-            $key   = trim($details[0]);
+            $key = trim($details[0]);
             $value = trim($details[1]);
 
-            $this->headers[$key] = $value;
+            if (isset($this->headers[$key]) === true) {
+                $this->headers[$key][] = $value;
+            } else {
+                $this->headers[$key] = [$value];
+            }
         }
 
         return strlen($header);
@@ -70,6 +75,7 @@ class HttpResponse
     public function setInfo(array $info)
     {
         $this->info = $info;
+
         return $this;
     }
 
@@ -85,7 +91,7 @@ class HttpResponse
     {
         foreach ($this->headers as $k => $value) {
             if (strtolower($key) === strtolower($k)) {
-                return $value;
+                return count($value) === 1 ? $value[0] : $value;
             }
         }
 
