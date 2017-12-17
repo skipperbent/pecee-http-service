@@ -13,6 +13,11 @@ class HttpRequest
     protected $returnHeader;
     protected $contentType;
 
+    /**
+     * HttpRequest constructor.
+     * @param string|null $url
+     * @throws \ErrorException
+     */
     public function __construct($url = null)
     {
         if (function_exists('curl_init') === false) {

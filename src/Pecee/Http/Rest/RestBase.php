@@ -76,6 +76,10 @@ class RestBase
             throw new RestException('Invalid request method');
         }
 
+        if(isset($data['_method']) === false) {
+            $data['_method'] = $method;
+        }
+
         if ($this->httpRequest->getRawPostData() !== null) {
             $data = [$this->httpRequest->getRawPostData()];
 
@@ -100,7 +104,7 @@ class RestBase
         $this->httpRequest->setUrl($apiUrl);
         $this->httpRequest->setMethod($method);
 
-        return $this->httpRequest->execute(true);
+        return $this->httpRequest->execute();
 
     }
 
