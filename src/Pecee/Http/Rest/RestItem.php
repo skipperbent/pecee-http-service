@@ -109,7 +109,6 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * Save item
      *
-     * @throws \Pecee\Http\Rest\RestException
      * @return static
      */
     public function save()
