@@ -1,38 +1,41 @@
 <?php
+
 namespace Pecee\Http\Rest;
+
+use Pecee\Http\HttpResponse;
 
 class RestItem implements IRestResult, IRestEventListener
 {
-    protected $primaryKey = 'id';
-    protected $row = array();
-    protected $service;
+    protected string $primaryKey = 'id';
+    protected array $row = array();
+    protected RestBase $service;
 
     public function __construct(RestBase $service)
     {
         $this->service = $service;
     }
 
-    public function setRow(array $row)
+    public function setRow(array $row): void
     {
         $this->row = $row;
     }
 
-    public function __set($name, $value = null)
+    public function __set(string $name, $value = null): void
     {
         $this->row->$name = $value;
     }
 
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return array_key_exists($name, $this->row);
     }
 
-    public function __get($name)
+    public function __get(string $name)
     {
         return isset($this->row->$name) ? $this->row->{$name} : null;
     }
 
-    public function getRow()
+    public function getRow(): array
     {
         return $this->row;
     }
@@ -42,7 +45,7 @@ class RestItem implements IRestResult, IRestEventListener
      *
      * @return \Pecee\Http\Rest\RestCollection
      */
-    public function onCreateCollection()
+    public function onCreateCollection(): RestCollection
     {
         return new RestCollection($this->service);
     }
@@ -50,7 +53,7 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * @return self
      */
-    public function onCreateItem()
+    public function onCreateItem(): self
     {
         return new static($this->service);
     }
@@ -60,15 +63,15 @@ class RestItem implements IRestResult, IRestEventListener
      *
      * @param string $id
      *
-     * @throws \Pecee\Http\Rest\RestException
      * @return static
+     * @throws \Pecee\Http\Rest\RestException
      */
-    public function getById($id)
+    public function getById(string $id): self
     {
         if ($this->{$this->primaryKey} === null) {
             throw new RestException(sprintf('Missing required argument "%s"', $this->primaryKey));
         }
-        $this->row = $this->api($id)->getRow();
+        $this->row = $this->api($id)->getResponseArray();
 
         return $this;
     }
@@ -76,15 +79,15 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * Delete item
      *
-     * @throws \Pecee\Http\Rest\RestException
      * @return static
+     * @throws \Pecee\Http\Rest\RestException
      */
-    public function delete()
+    public function delete(): self
     {
         if ($this->{$this->primaryKey} === null) {
             throw new RestException(sprintf('Failed to delete. Missing required argument "%s"', $this->primaryKey));
         }
-        $this->row = $this->api($this->id, RestBase::METHOD_DELETE)->getRow();
+        $this->row = $this->api($this->id, RestBase::METHOD_DELETE)->getResponseArray();
 
         return $this;
     }
@@ -92,16 +95,16 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * Update item
      *
-     * @throws \Pecee\Http\Rest\RestException
      * @return static
+     * @throws \Pecee\Http\Rest\RestException
      */
-    public function update()
+    public function update(): self
     {
         if ($this->{$this->primaryKey} === null) {
             throw new RestException(sprintf('Failed to update. Missing required argument "%s"', $this->primaryKey));
         }
 
-        $this->row = $this->api($this->id, RestBase::METHOD_PUT, (array)$this->row)->getRow();
+        $this->row = $this->api($this->id, RestBase::METHOD_PUT, $this->row)->getResponseArray();
 
         return $this;
     }
@@ -111,9 +114,9 @@ class RestItem implements IRestResult, IRestEventListener
      *
      * @return static
      */
-    public function save()
+    public function save(): self
     {
-        $this->row = $this->api(null, RestBase::METHOD_POST, (array)$this->row)->getRow();
+        $this->row = $this->api(null, RestBase::METHOD_POST, $this->row)->getResponseArray();
 
         return $this;
     }
@@ -121,7 +124,7 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * @return RestBase
      */
-    public function getService()
+    public function getService(): RestBase
     {
         return $this->service;
     }
@@ -129,17 +132,17 @@ class RestItem implements IRestResult, IRestEventListener
     /**
      * @param RestBase $service
      */
-    public function setService(RestBase $service)
+    public function setService(RestBase $service): void
     {
         $this->service = $service;
     }
 
-    public function api($url = null, $method = RestBase::METHOD_GET, array $data = array())
+    public function api(?string $url = null, string $method = RestBase::METHOD_GET, array $data = array()): HttpResponse
     {
         return $this->service->api($url, $method, $data);
     }
 
-    public function execute()
+    public function execute(): HttpResponse
     {
         return $this->api();
     }

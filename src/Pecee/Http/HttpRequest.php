@@ -3,22 +3,22 @@ namespace Pecee\Http;
 
 class HttpRequest
 {
-    protected $url;
-    protected $method;
-    protected $headers;
-    protected $options;
-    protected $rawData;
-    protected $data;
-    protected $timeout;
-    protected $returnHeader;
-    protected $contentType;
+    protected ?string $url;
+    protected ?string $method;
+    protected array $headers;
+    protected array $options;
+    protected ?string $rawData;
+    protected array $data;
+    protected int $timeout;
+    protected bool $returnHeader;
+    protected ?string $contentType;
 
     /**
      * HttpRequest constructor.
      * @param string|null $url
      * @throws \ErrorException
      */
-    public function __construct($url = null)
+    public function __construct(?string $url = null)
     {
         if (function_exists('curl_init') === false) {
             throw new \ErrorException('This service requires the CURL PHP extension.');
@@ -47,7 +47,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function addHeader($header)
+    public function addHeader(string $header): self
     {
         $this->headers[] = $header;
 
@@ -61,7 +61,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setHeaders(array $headers)
+    public function setHeaders(array $headers): self
     {
         $this->headers = $headers;
 
@@ -72,7 +72,7 @@ class HttpRequest
      * Get all headers
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -85,7 +85,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function addOption($option, $value)
+    public function addOption(string $option, string $value): self
     {
         $this->options[$option] = $value;
 
@@ -99,7 +99,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): self
     {
         $this->options = $options;
 
@@ -114,7 +114,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function addPostData($key, $value)
+    public function addPostData(string $key, string $value): self
     {
         $this->data[$key] = $value;
 
@@ -128,7 +128,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setPostData(array $data)
+    public function setPostData(array $data): self
     {
         $this->data = $data;
 
@@ -142,7 +142,7 @@ class HttpRequest
      *
      * @return static $this;
      */
-    public function setRawPostData($data)
+    public function setRawPostData(string $data): self
     {
         $this->rawData = $data;
 
@@ -154,7 +154,7 @@ class HttpRequest
      *
      * @return array
      */
-    public function getPostData()
+    public function getPostData(): array
     {
         return $this->data;
     }
@@ -164,7 +164,7 @@ class HttpRequest
      *
      * @return string
      */
-    public function getRawPostData()
+    public function getRawPostData(): string
     {
         return $this->rawData;
     }
@@ -176,7 +176,7 @@ class HttpRequest
      *
      * @return HttpResponse $this
      */
-    public function post($return = false)
+    public function post(bool $return = false): HttpResponse
     {
         $this->options[CURLOPT_POST] = true;
 
@@ -190,7 +190,7 @@ class HttpRequest
      *
      * @return HttpResponse
      */
-    public function get($return = false)
+    public function get(bool $return = false): HttpResponse
     {
         return $this->execute($return);
     }
@@ -202,7 +202,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setTimeout($timeout)
+    public function setTimeout(int $timeout): self
     {
         $this->timeout = $timeout;
 
@@ -212,11 +212,11 @@ class HttpRequest
     /**
      * Set method
      *
-     * @param string $method
+     * @param string|null $method
      *
      * @return static $this
      */
-    public function setMethod($method)
+    public function setMethod(?string $method): self
     {
         $this->method = $method;
 
@@ -226,11 +226,11 @@ class HttpRequest
     /**
      * Set content-type
      *
-     * @param string $contentType
+     * @param string|null $contentType
      *
      * @return static $this
      */
-    public function setContentType($contentType)
+    public function setContentType(?string $contentType): self
     {
         $this->contentType = strtolower($contentType);
 
@@ -240,9 +240,9 @@ class HttpRequest
     /**
      * Get content-type
      *
-     * @return string
+     * @return string|null
      */
-    public function getContentType()
+    public function getContentType(): ?string
     {
         return $this->contentType;
     }
@@ -250,19 +250,19 @@ class HttpRequest
     /**
      * Get url
      *
-     * @return string
+     * @return string|null
      */
-    public function getUrl()
+    public function getUrl(): ?string
     {
         return $this->url;
     }
 
     /**
-     * @param string $url
+     * @param string|null $url
      *
      * @return static $this
      */
-    public function setUrl($url)
+    public function setUrl(?string $url): self
     {
         $this->url = $url;
 
@@ -276,7 +276,7 @@ class HttpRequest
      *
      * @return static $this
      */
-    public function setReturnHeader($bool)
+    public function setReturnHeader(bool $bool): self
     {
         $this->returnHeader = $bool;
 
@@ -286,19 +286,19 @@ class HttpRequest
     /**
      * Set basic authentication
      *
-     * @param $username
-     * @param $password
+     * @param string $username
+     * @param string $password
      *
      * @return static $this
      */
-    public function setBasicAuth($username, $password)
+    public function setBasicAuth(string $username, string $password): self
     {
         $this->addHeader('Authorization: Basic ' . base64_encode(sprintf('%s:%s', $username, $password)));
 
         return $this;
     }
 
-    public function execute($return = true)
+    public function execute(bool $return = true): HttpResponse
     {
         $handle = curl_init();
 
@@ -327,7 +327,7 @@ class HttpRequest
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
         }
 
-        if ($this->timeout !== null && $this->timeout > 0) {
+        if ($this->timeout > 0) {
             // Disable PHP timeout
             set_time_limit($this->timeout);
 
@@ -350,7 +350,7 @@ class HttpRequest
                     break;
             }
 
-            foreach ((array)$this->headers as $key => $header) {
+            foreach ($this->headers as $key => $header) {
                 if (stripos($header, 'content-length:') !== false) {
                     unset($this->headers[$key]);
                 }
@@ -370,7 +370,7 @@ class HttpRequest
 
         // Add custom curl options
         if (count($this->options) > 0) {
-            foreach ((array)$this->options as $option => $value) {
+            foreach ($this->options as $option => $value) {
                 curl_setopt($handle, $option, $value);
             }
         }
