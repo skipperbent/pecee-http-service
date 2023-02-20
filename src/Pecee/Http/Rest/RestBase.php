@@ -2,27 +2,28 @@
 namespace Pecee\Http\Rest;
 
 use Pecee\Http\HttpRequest;
+use Pecee\Http\HttpResponse;
 
 class RestBase
 {
-    const METHOD_GET = 'GET';
-    const METHOD_POST = 'POST';
-    const METHOD_PUT = 'PUT';
-    const METHOD_DELETE = 'DELETE';
+    public const METHOD_GET = 'GET';
+    public const METHOD_POST = 'POST';
+    public const METHOD_PUT = 'PUT';
+    public const METHOD_DELETE = 'DELETE';
 
-    public static $METHODS = [
+    public static array $METHODS = [
         self::METHOD_GET,
         self::METHOD_POST,
         self::METHOD_PUT,
         self::METHOD_DELETE
     ];
 
-    protected $serviceUrl;
+    protected string $serviceUrl;
 
     /**
      * @var HttpRequest
      */
-    protected $httpRequest;
+    protected HttpRequest $httpRequest;
 
     public function __construct()
     {
@@ -33,7 +34,7 @@ class RestBase
      * Get service url
      * @return string
      */
-    public function getServiceUrl()
+    public function getServiceUrl(): string
     {
         return $this->serviceUrl;
     }
@@ -43,9 +44,9 @@ class RestBase
      *
      * @param string $serviceUrl
      *
-     * @return static$this
+     * @return static $this
      */
-    public function setServiceUrl($serviceUrl)
+    public function setServiceUrl(string $serviceUrl): self
     {
         $this->serviceUrl = $serviceUrl;
 
@@ -55,7 +56,7 @@ class RestBase
     /**
      * @return HttpRequest
      */
-    public function getHttpRequest()
+    public function getHttpRequest(): HttpRequest
     {
         return $this->httpRequest;
     }
@@ -68,9 +69,9 @@ class RestBase
      * @param array|null $data
      *
      * @throws \Pecee\Http\Rest\RestException
-     * @return \Pecee\Http\HttpResponse|mixed
+     * @return \Pecee\Http\HttpResponse
      */
-    public function api($url = null, $method = self::METHOD_GET, array $data = array())
+    public function api(?string $url = null, string $method = self::METHOD_GET, array $data = array()): HttpResponse
     {
         if (in_array($method, static::$METHODS, true) === false) {
             throw new RestException('Invalid request method');
@@ -90,7 +91,7 @@ class RestBase
             }
         }
 
-        if ($method === static::METHOD_GET && is_array($data)) {
+        if ($method === static::METHOD_GET) {
             $separator = (strpos($url, '?') !== false) ? '&' : '?';
             $url .= $separator . http_build_query($data);
         }

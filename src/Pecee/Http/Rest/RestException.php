@@ -1,4 +1,5 @@
 <?php
+
 namespace Pecee\Http\Rest;
 
 use Pecee\Http\HttpException;

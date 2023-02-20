@@ -1,5 +1,5 @@
 <?php
-
+require_once 'boot.php';
 class HttpRequestTest extends PHPUnit_Framework_TestCase
 {
 

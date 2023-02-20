@@ -1,31 +1,34 @@
 <?php
+
 namespace Pecee\Http\Rest;
+
+use Pecee\Http\HttpResponse;
 
 class RestCollection implements IRestResult
 {
     /**
      * @var RestBase
      */
-    protected $service;
-    protected $rows;
+    protected RestBase $service;
+    protected array $rows;
 
     public function __construct(RestBase $service)
     {
         $this->service = $service;
-        $this->rows    = array();
+        $this->rows = array();
     }
 
-    public function getRow($index)
+    public function getRow(int $index)
     {
-        return isset($this->rows[$index]) ? $this->rows[$index] : null;
+        return $this->rows[$index] ?? null;
     }
 
-    public function getRows()
+    public function getRows(): array
     {
         return $this->rows;
     }
 
-    public function setRows(array $rows)
+    public function setRows(array $rows): void
     {
         $this->rows = $rows;
     }
@@ -33,14 +36,14 @@ class RestCollection implements IRestResult
     /**
      * Execute api call
      *
-     * @param null $url
+     * @param string|null $url
      * @param string $method
      * @param array|null $data
      *
+     * @return HttpResponse
      * @throws RestException
-     * @return static
      */
-    public function api($url = null, $method = RestBase::METHOD_GET, array $data = array())
+    public function api(?string $url = null, string $method = RestBase::METHOD_GET, array $data = array()): HttpResponse
     {
         return $this->service->api($url, $method, $data);
     }
@@ -50,20 +53,20 @@ class RestCollection implements IRestResult
      *
      * Alias for $this->api();
      *
-     * @return static
+     * @return HttpResponse
      * @throws RestException
      */
-    public function execute()
+    public function execute(): HttpResponse
     {
         return $this->api();
     }
 
-    public function getService()
+    public function getService(): RestBase
     {
         return $this->service;
     }
 
-    public function setService(RestBase $service)
+    public function setService(RestBase $service): void
     {
         $this->service = $service;
     }
