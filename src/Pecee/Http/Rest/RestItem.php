@@ -110,9 +110,8 @@ class RestItem implements IRestResult, IRestEventListener
     }
 
     /**
-     * Save item
-     *
-     * @return static
+     * @return static $this
+     * @throws RestException
      */
     public function save(): self
     {
@@ -137,11 +136,22 @@ class RestItem implements IRestResult, IRestEventListener
         $this->service = $service;
     }
 
+    /**
+     * @param string|null $url
+     * @param string $method
+     * @param array $data
+     * @return HttpResponse
+     * @throws RestException
+     */
     public function api(?string $url = null, string $method = RestBase::METHOD_GET, array $data = array()): HttpResponse
     {
         return $this->service->api($url, $method, $data);
     }
 
+    /**
+     * @return HttpResponse
+     * @throws RestException
+     */
     public function execute(): HttpResponse
     {
         return $this->api();
