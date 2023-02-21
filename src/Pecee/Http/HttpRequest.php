@@ -9,7 +9,7 @@ class HttpRequest
     protected array $options;
     protected ?string $rawData;
     protected array $data;
-    protected int $timeout;
+    protected int $timeout = 0;
     protected bool $returnHeader;
     protected ?string $contentType;
 
