@@ -2,7 +2,6 @@
 namespace Pecee\Http\Rest;
 
 use Pecee\Http\HttpRequest;
-use Pecee\Http\HttpResponse;
 
 class RestBase
 {
@@ -71,7 +70,7 @@ class RestBase
      * @throws \Pecee\Http\Rest\RestException
      * @return \Pecee\Http\HttpResponse
      */
-    public function api(?string $url = null, string $method = self::METHOD_GET, array $data = array()): HttpResponse
+    public function api(?string $url = null, string $method = self::METHOD_GET, array $data = array())
     {
         if (in_array($method, static::$METHODS, true) === false) {
             throw new RestException('Invalid request method');
@@ -102,7 +101,6 @@ class RestBase
         $this->httpRequest->setMethod($method);
 
         return $this->httpRequest->execute();
-
     }
 
 }
