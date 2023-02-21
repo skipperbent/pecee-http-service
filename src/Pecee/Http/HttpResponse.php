@@ -127,7 +127,7 @@ class HttpResponse
 
     public function getResponseArray(): array
     {
-        return json_decode($this->getResponse(), false);
+        return json_decode($this->getResponse(), true);
     }
 
 }
