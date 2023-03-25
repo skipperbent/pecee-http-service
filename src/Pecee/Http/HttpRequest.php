@@ -166,7 +166,7 @@ class HttpRequest
      */
     public function getRawPostData(): string
     {
-        return $this->rawData;
+        return $this->rawData ?? '';
     }
 
     /**
@@ -340,6 +340,7 @@ class HttpRequest
 
             switch ($this->contentType) {
                 default:
+                    $this->addHeader('Content-Type: binary;boundary=');
                     $data = $this->rawData;
                     break;
                 case 'application/json':
